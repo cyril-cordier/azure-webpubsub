@@ -1,10 +1,11 @@
+require("dotenv").config();
 const express = require('express');
 const { WebPubSubServiceClient } = require('@azure/web-pubsub');
 const { WebPubSubEventHandler } = require('@azure/web-pubsub-express');
 
 const app = express();
 const hubName = 'sample_chat';
-const port = 8080;
+const port = 8000;
 
 let connectionString = process.argv[2] || process.env.WebPubSubConnectionString;
 let serviceClient = new WebPubSubServiceClient(connectionString, hubName);
@@ -17,6 +18,7 @@ let handler = new WebPubSubEventHandler(hubName, {
       message: `${req.context.userId} joined`
     });
   },
+  
   handleUserEvent: async (req, res) => {
     if (req.context.eventName === 'message') {
       await serviceClient.sendToAll({
